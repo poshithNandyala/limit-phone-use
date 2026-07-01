@@ -1,0 +1,48 @@
+name: ✨ Feature Request
+description: Suggest a new feature, quote category, or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got an idea to make Digital Wellbeing better? Tell us about it below.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: What's missing, or what's annoying about the current experience?
+      placeholder: I wish I could snooze reminders for an hour when I'm in a meeting...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: What would you like to happen?
+      description: Describe the feature or change you'd like to see.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does this apply?
+      multiple: true
+      options:
+        - Home / Reminders
+        - Quote Library
+        - Stats
+        - Settings
+        - Notifications
+        - New quote category
+        - Something else
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+    validations:
+      required: false
