@@ -2,7 +2,7 @@
   "expo": {
     "name": "Digital Wellbeing",
     "slug": "digital-wellbeing",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.frontend",
+      "bundleIdentifier": "com.digitalwellbeing.app",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"],
         "NSUserNotificationsUsageDescription": "Get reminders to reduce screen time and improve wellbeing"
@@ -31,7 +31,8 @@
         "VIBRATE",
         "POST_NOTIFICATIONS"
       ],
-      "package": "com.anonymous.frontend"
+      "package": "com.digitalwellbeing.app",
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",

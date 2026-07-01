@@ -8,15 +8,19 @@
 
 ## 🌟 Features
 
-- **Smart Notifications**: Automatic reminders every 10 minutes while using your phone
-- **Dual Reminder System**: 
-  - 30+ Pre-defined motivational messages
-  - AI-generated personalized reasons (powered by GPT-5.2)
-  - Mix mode for variety
-- **Screen Time Tracking**: Real-time monitoring of phone usage
-- **Statistics Dashboard**: Visual insights into your daily screen time
+- **100+ Curated Quotes**: Hand-picked motivational quotes across 10 categories (Health,
+  Relationships, Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, Growth)
+- **Works Fully Offline**: The quote library ships inside the app — no backend required
+- **Smart Notifications**: Configurable reminders (5–60 min) while using your phone
+- **Optional AI Reminders**: Plug in a backend URL for AI-generated personalized reasons, or mix AI + quotes
+- **Favorites**: Heart any quote to save it, browse your favorites anytime
+- **Quote Library Tab**: Search and filter all quotes by category
+- **Share Quotes**: Share any quote to your favorite apps
+- **Daily Streaks**: Tracks consecutive days you've used the app
+- **Stats Dashboard**: Screen time, reminders sent, and a 7-day activity chart
+- **Dark Mode**: Full light/dark theme support
 - **Manual Reminders**: Instant notification button when you need motivation
-- **Customizable**: Toggle notifications on/off, choose reminder types
+- **Customizable**: Toggle notifications on/off, choose reminder interval, type, and categories
 
 ## 📸 Screenshots
 
@@ -27,10 +31,15 @@
 ### Option 1: Install APK (Android) - **Easiest**
 
 1. Go to [Releases](../../releases)
-2. Download the latest `digital-wellbeing.apk`
+2. Download the latest `digital-wellbeing-vX.Y.Z.apk`
 3. Install on your Android device
 4. Enable "Install from Unknown Sources" if prompted
-5. Open the app and start your wellbeing journey!
+5. Open the app and start your wellbeing journey! No setup, no backend, no account needed —
+   it works completely offline.
+
+Every release APK is built and published automatically by GitHub Actions
+(see [`.github/workflows/release.yml`](.github/workflows/release.yml)) whenever a new
+version tag is pushed.
 
 ### Option 2: Test with Expo Go
 
@@ -114,25 +123,26 @@ eas build --platform ios --profile production
   - AsyncStorage for local data
   - Expo Router for navigation
 
-- **Backend**:
+- **Backend (optional, for AI reminders only)**:
   - FastAPI (Python)
   - MongoDB for data storage
   - OpenAI GPT-5.2 integration
   - CORS enabled for cross-origin requests
 
-- **AI Integration**:
+- **AI Integration** (optional):
   - Emergent LLM integration library
   - OpenAI GPT-5.2 for personalized motivation
 
 ## 📱 How It Works
 
 1. **App State Detection**: Tracks when you're actively using your phone
-2. **Timer System**: Every 10 minutes of active use triggers a reminder
-3. **Smart Reasons**: Fetches motivational messages from backend
-   - Pre-defined: Curated collection of 30+ powerful reasons
-   - AI-generated: Real-time personalized messages from GPT-5.2
+2. **Timer System**: Every N minutes (configurable, 5–60) of active use triggers a reminder
+3. **Smart Reasons**: Picks a quote from the 100+ built-in, categorized quote library — completely
+   offline, no backend required. If a backend URL is configured, it can also fetch AI-generated
+   messages and mix them in, with an automatic fallback to the local library if the backend is
+   unreachable.
 4. **Local Notifications**: Native push notifications on your device
-5. **Stats Tracking**: Monitors and displays your screen time progress
+5. **Stats Tracking**: Screen time, reminders sent, streaks, and a 7-day chart — all stored locally
 
 ## 🎯 Use Cases
 
