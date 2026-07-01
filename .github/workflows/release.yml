@@ -70,12 +70,12 @@ jobs:
 
       - name: Build APK
         working-directory: frontend/android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Locate APK
         id: apk
         run: |
-          APK_PATH=$(find android/app/build/outputs/apk -name "*.apk" | head -n 1)
+          APK_PATH=$(find android/app/build/outputs/apk/release -name "*.apk" | head -n 1)
           echo "path=$APK_PATH" >> "$GITHUB_OUTPUT"
           cp "$APK_PATH" "digital-wellbeing-${{ steps.tag.outputs.tag }}.apk"
 
@@ -104,6 +104,6 @@ jobs:
             10 categories). AI-generated reminders activate automatically if a backend
             URL was configured at build time.
 
-            _Note: this is a debug-signed build intended for direct sideloading, not a
-            Play Store release. If you need a Play Store-ready build, use `eas build`
-            with your own signing credentials._
+            _Note: this build is signed with the default Android debug keystore (fine for
+            direct installs/sideloading), not a Play Store release key. If you need a
+            Play Store-ready build, use `eas build` with your own signing credentials._
