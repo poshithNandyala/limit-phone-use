@@ -91,20 +91,29 @@ Once the app is published to the App Store, search for "Digital Wellbeing" and i
 - Disable reminders when you need focused phone time
 
 ### Understanding Stats
-- **Screen Time**: Shows how many minutes you've been active today
+- **Time in App**: Shows how many minutes you've had the app open today (not your total phone
+  screen time — see Troubleshooting below)
 - **Reminders Sent**: Count of notifications sent to you
 
 ### Reminder Types
-- **Quotes**: 100+ carefully crafted, categorized quotes covering Health, Relationships,
-  Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, and Growth. These are
+- **Quotes**: 200+ carefully crafted, categorized quotes covering Health, Relationships,
+  Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, Growth, and Other. These are
   bundled in the app and work completely offline — browse, search, favorite, and share them
-  from the Quote Library tab.
-- **AI Generated** (optional): Only available if you (or the app builder) configured a backend
-  URL. Produces real-time personalized messages. Falls back to quotes automatically if the
-  backend is unreachable.
+  from the Quote Library tab, or add your own from there too.
+- **AI Generated** (optional): Available once you paste a free Gemini API key in Settings
+  (called directly from your device to Google, no backend needed), or if a legacy backend URL
+  was configured at build time. Falls back to quotes automatically if AI is unavailable.
 - **Mix**: Alternates between quotes and AI-generated messages.
 
+### Background Reminders
+Reminders are scheduled directly with your phone's notification system ahead of time, so they
+keep arriving on schedule even if the app is closed or not running — no need to keep it open.
+
 ### New in this version
+- Reminders now work in the background, not just while the app is open
+- Add your own quotes, filed under any category (including "Other")
+- Free Gemini API key support for AI-generated reminders — no backend required
+- Streaks tab: track any habit with a streak counter, calendar view, and milestone badges
 - Pick which quote categories you want reminders from (Settings/Home)
 - Choose your reminder interval, from 5 to 60 minutes
 - Heart any quote to save it to Favorites

@@ -1,5 +1,15 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, TouchableOpacity, Alert, Linking } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Switch,
+  TouchableOpacity,
+  Alert,
+  Linking,
+  TextInput,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { useAppContext } from '@/context/AppContext';
@@ -8,17 +18,40 @@ import { AppTheme } from '@/constants/theme';
 const REPO_URL = 'https://github.com/poshithNandyala/limit-phone-use';
 const RELEASES_URL = 'https://github.com/poshithNandyala/limit-phone-use/releases/latest';
 const NEW_ISSUE_URL = 'https://github.com/poshithNandyala/limit-phone-use/issues/new/choose';
+const GEMINI_KEY_URL = 'https://aistudio.google.com/apikey';
 
 export default function SettingsScreen() {
-  const { theme, isDark, toggleDark, favorites, clearFavorites, hasAiBackend } = useAppContext();
+  const {
+    theme,
+    isDark,
+    toggleDark,
+    favorites,
+    clearFavorites,
+    hasGemini,
+    hasLegacyBackend,
+    geminiApiKey,
+    setGeminiApiKey,
+  } = useAppContext();
   const styles = getStyles(theme);
   const version = Constants.expoConfig?.version ?? '1.0.0';
+
+  const [keyInput, setKeyInput] = useState(geminiApiKey);
+  const [showKey, setShowKey] = useState(false);
 
   const handleClearFavorites = () => {
     Alert.alert('Clear Favorites', `Remove all ${favorites.length} saved favorites?`, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Clear', style: 'destructive', onPress: clearFavorites },
     ]);
+  };
+
+  const handleSaveKey = () => {
+    setGeminiApiKey(keyInput.trim());
+  };
+
+  const handleClearKey = () => {
+    setKeyInput('');
+    setGeminiApiKey('');
   };
 
   return (
@@ -46,14 +79,66 @@ export default function SettingsScreen() {
             <Ionicons name="sparkles-outline" size={22} color={theme.text} />
             <Text style={styles.rowLabel}>AI Reminders</Text>
           </View>
-          <Text style={[styles.badge, hasAiBackend ? styles.badgeOn : styles.badgeOff]}>
-            {hasAiBackend ? 'Connected' : 'Not configured'}
+          <Text style={[styles.badge, hasGemini || hasLegacyBackend ? styles.badgeOn : styles.badgeOff]}>
+            {hasGemini ? 'Gemini Connected' : hasLegacyBackend ? 'Backend Connected' : 'Not configured'}
           </Text>
         </View>
         <Text style={styles.hint}>
-          Set EXPO_PUBLIC_BACKEND_URL when building the app to enable AI-generated reminders.
-          The app works fully offline without it, using the built-in quote library.
+          Paste your own free Gemini API key below to unlock AI-generated reminders, sent directly
+          from your device to Google - it never touches any server of ours. Leave it blank and the
+          app works great with the built-in quote library, offline.
         </Text>
+
+        <TextInput
+          style={styles.keyInput}
+          placeholder="Paste your Gemini API key..."
+          placeholderTextColor={theme.subtext}
+          value={keyInput}
+          onChangeText={setKeyInput}
+          secureTextEntry={!showKey}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <View style={styles.keyActions}>
+          <TouchableOpacity onPress={() => setShowKey((v) => !v)} style={styles.keyActionButton}>
+            <Ionicons name={showKey ? 'eye-off-outline' : 'eye-outline'} size={16} color={theme.subtext} />
+            <Text style={styles.keyActionText}>{showKey ? 'Hide' : 'Show'}</Text>
+          </TouchableOpacity>
+          {!!geminiApiKey && (
+            <TouchableOpacity onPress={handleClearKey} style={styles.keyActionButton}>
+              <Ionicons name="trash-outline" size={16} color="#FF6B6B" />
+              <Text style={[styles.keyActionText, { color: '#FF6B6B' }]}>Remove</Text>
+            </TouchableOpacity>
+          )}
+          <View style={{ flex: 1 }} />
+          <TouchableOpacity style={styles.saveKeyButton} onPress={handleSaveKey}>
+            <Text style={styles.saveKeyButtonText}>Save</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openURL(GEMINI_KEY_URL)}>
+          <Ionicons name="key-outline" size={16} color={theme.primary} />
+          <Text style={[styles.linkText, { color: theme.primary, fontSize: 13 }]}>
+            Get a free Gemini API key
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.card}>
+        <View style={styles.rowLeft}>
+          <Ionicons name="notifications-outline" size={22} color={theme.text} />
+          <Text style={styles.rowLabel}>Background Reminders</Text>
+        </View>
+        <Text style={styles.hint}>
+          Reminders are scheduled directly with your phone's notification system, so they keep
+          arriving even when the app is closed. Make sure notifications are allowed for this app
+          in your phone's system settings if reminders ever stop showing up.
+        </Text>
+        <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openSettings()}>
+          <Ionicons name="settings-outline" size={16} color={theme.primary} />
+          <Text style={[styles.linkText, { color: theme.primary, fontSize: 13 }]}>
+            Open Notification Settings
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.card}>
@@ -111,5 +196,20 @@ function getStyles(theme: AppTheme) {
     linkText: { fontSize: 14, fontWeight: '600' },
     footer: { alignItems: 'center', marginTop: 10 },
     footerText: { fontSize: 13, color: theme.subtext, fontStyle: 'italic' },
+    keyInput: {
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 10,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      color: theme.text,
+      fontSize: 14,
+      marginTop: 12,
+    },
+    keyActions: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10 },
+    keyActionButton: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+    keyActionText: { fontSize: 13, color: theme.subtext, fontWeight: '500' },
+    saveKeyButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10, backgroundColor: theme.primary },
+    saveKeyButtonText: { color: '#ffffff', fontWeight: '600', fontSize: 13 },
   });
 }
