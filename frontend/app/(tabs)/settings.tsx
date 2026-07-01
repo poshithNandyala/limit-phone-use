@@ -31,9 +31,21 @@ export default function SettingsScreen() {
     hasLegacyBackend,
     geminiApiKey,
     setGeminiApiKey,
+    quietHoursEnabled,
+    setQuietHoursEnabled,
+    quietHoursStart,
+    setQuietHoursStart,
+    quietHoursEnd,
+    setQuietHoursEnd,
   } = useAppContext();
   const styles = getStyles(theme);
   const version = Constants.expoConfig?.version ?? '1.0.0';
+
+  const formatHour = (hour: number) => {
+    const h = ((hour + 11) % 12) + 1;
+    return `${h} ${hour < 12 ? 'AM' : 'PM'}`;
+  };
+  const cycleHour = (hour: number, delta: number) => (hour + delta + 24) % 24;
 
   const [keyInput, setKeyInput] = useState(geminiApiKey);
   const [showKey, setShowKey] = useState(false);
@@ -142,6 +154,71 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.card}>
+        <View style={styles.row}>
+          <View style={styles.rowLeft}>
+            <Ionicons name="moon-outline" size={22} color={theme.text} />
+            <Text style={styles.rowLabel}>Quiet Hours</Text>
+          </View>
+          <Switch
+            value={quietHoursEnabled}
+            onValueChange={setQuietHoursEnabled}
+            trackColor={{ false: '#d1d5db', true: theme.primary }}
+            thumbColor="#ffffff"
+          />
+        </View>
+        <Text style={styles.hint}>
+          Pause reminders during this window so you're not disturbed while asleep or otherwise not
+          using your phone. Reminders resume automatically right after it ends.
+        </Text>
+        {quietHoursEnabled && (
+          <View style={styles.hourRow}>
+            <View style={styles.hourGroup}>
+              <Text style={styles.hourGroupLabel}>From</Text>
+              <View style={styles.hourStepper}>
+                <TouchableOpacity onPress={() => setQuietHoursStart(cycleHour(quietHoursStart, -1))} style={styles.hourButton}>
+                  <Ionicons name="remove" size={16} color={theme.primary} />
+                </TouchableOpacity>
+                <Text style={styles.hourValue}>{formatHour(quietHoursStart)}</Text>
+                <TouchableOpacity onPress={() => setQuietHoursStart(cycleHour(quietHoursStart, 1))} style={styles.hourButton}>
+                  <Ionicons name="add" size={16} color={theme.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.hourGroup}>
+              <Text style={styles.hourGroupLabel}>Until</Text>
+              <View style={styles.hourStepper}>
+                <TouchableOpacity onPress={() => setQuietHoursEnd(cycleHour(quietHoursEnd, -1))} style={styles.hourButton}>
+                  <Ionicons name="remove" size={16} color={theme.primary} />
+                </TouchableOpacity>
+                <Text style={styles.hourValue}>{formatHour(quietHoursEnd)}</Text>
+                <TouchableOpacity onPress={() => setQuietHoursEnd(cycleHour(quietHoursEnd, 1))} style={styles.hourButton}>
+                  <Ionicons name="add" size={16} color={theme.primary} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.card}>
+        <View style={styles.rowLeft}>
+          <Ionicons name="time-outline" size={22} color={theme.text} />
+          <Text style={styles.rowLabel}>About "Time in App"</Text>
+        </View>
+        <Text style={styles.hint}>
+          This app can only measure how long it's been open itself - it can't see your total phone
+          usage across other apps. For your real, device-wide screen time, check your phone's own
+          Digital Wellbeing / Screen Time dashboard in system settings.
+        </Text>
+        <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openSettings()}>
+          <Ionicons name="phone-portrait-outline" size={16} color={theme.primary} />
+          <Text style={[styles.linkText, { color: theme.primary, fontSize: 13 }]}>
+            Open Phone Settings
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.card}>
         <TouchableOpacity style={styles.row} onPress={handleClearFavorites}>
           <View style={styles.rowLeft}>
             <Ionicons name="heart-dislike-outline" size={22} color="#FF6B6B" />
@@ -211,5 +288,20 @@ function getStyles(theme: AppTheme) {
     keyActionText: { fontSize: 13, color: theme.subtext, fontWeight: '500' },
     saveKeyButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10, backgroundColor: theme.primary },
     saveKeyButtonText: { color: '#ffffff', fontWeight: '600', fontSize: 13 },
+    hourRow: { flexDirection: 'row', gap: 16, marginTop: 14 },
+    hourGroup: { flex: 1, alignItems: 'center' },
+    hourGroupLabel: { fontSize: 12, color: theme.subtext, marginBottom: 6 },
+    hourStepper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      borderWidth: 1,
+      borderColor: theme.border,
+      borderRadius: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+    hourButton: { padding: 2 },
+    hourValue: { fontSize: 14, fontWeight: '600', color: theme.text, minWidth: 48, textAlign: 'center' },
   });
 }

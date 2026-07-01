@@ -39,6 +39,9 @@ interface PersistedState {
   customQuotes: Quote[];
   geminiApiKey: string;
   habits: Habit[];
+  quietHoursEnabled: boolean;
+  quietHoursStart: number; // 0-23, local hour
+  quietHoursEnd: number; // 0-23, local hour (exclusive)
 }
 
 const STORAGE_KEY = 'digitalWellbeing:v2';
@@ -58,6 +61,9 @@ const defaultState: PersistedState = {
   customQuotes: [],
   geminiApiKey: '',
   habits: [],
+  quietHoursEnabled: true,
+  quietHoursStart: 22,
+  quietHoursEnd: 7,
 };
 
 interface AppContextValue extends PersistedState {
@@ -88,6 +94,9 @@ interface AppContextValue extends PersistedState {
   addHabit: (name: string, emoji: string) => void;
   deleteHabit: (id: string) => void;
   toggleHabitToday: (id: string) => void;
+  setQuietHoursEnabled: (v: boolean) => void;
+  setQuietHoursStart: (hour: number) => void;
+  setQuietHoursEnd: (hour: number) => void;
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -290,6 +299,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     addHabit,
     deleteHabit,
     toggleHabitToday,
+    setQuietHoursEnabled: (v: boolean) => update({ quietHoursEnabled: v }),
+    setQuietHoursStart: (hour: number) => update({ quietHoursStart: hour }),
+    setQuietHoursEnd: (hour: number) => update({ quietHoursEnd: hour }),
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

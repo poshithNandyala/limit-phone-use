@@ -80,6 +80,9 @@ export default function Home() {
     addReminderCountsForDates,
     markAppOpened,
     loaded,
+    quietHoursEnabled,
+    quietHoursStart,
+    quietHoursEnd,
   } = useAppContext();
 
   const [loading, setLoading] = useState(false);
@@ -99,12 +102,23 @@ export default function Home() {
         intervalMinutes: reminderInterval,
         categories: selectedCategories,
         extraQuotes: customQuotes,
+        quietHoursEnabled,
+        quietHoursStart,
+        quietHoursEnd,
       });
     } else {
       await cancelUpcoming();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEnabled, reminderInterval, selectedCategories, customQuotes]);
+  }, [
+    isEnabled,
+    reminderInterval,
+    selectedCategories,
+    customQuotes,
+    quietHoursEnabled,
+    quietHoursStart,
+    quietHoursEnd,
+  ]);
 
   useEffect(() => {
     syncRef.current = syncBackgroundReminders;
@@ -130,7 +144,16 @@ export default function Home() {
     if (isEnabled) startUsageTimer();
     return stopUsageTimer;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEnabled, reminderInterval, selectedCategories, customQuotes, loaded]);
+  }, [
+    isEnabled,
+    reminderInterval,
+    selectedCategories,
+    customQuotes,
+    quietHoursEnabled,
+    quietHoursStart,
+    quietHoursEnd,
+    loaded,
+  ]);
 
   const registerForPushNotificationsAsync = async () => {
     if (Platform.OS === 'android') {
