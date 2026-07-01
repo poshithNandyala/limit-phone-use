@@ -49,6 +49,27 @@ async function writeSchedule(entries: ScheduledEntry[]): Promise<void> {
   }
 }
 
+function isQuietHour(hour: number, start: number, end: number): boolean {
+  if (start === end) return false;
+  if (start < end) return hour >= start && hour < end;
+  return hour >= start || hour < end; // wraps past midnight, e.g. 22 -> 7
+}
+
+// Nudges a candidate fire time past the end of quiet hours if it falls
+// inside the window, so reminders pause overnight (or whenever configured)
+// instead of buzzing while you're asleep or otherwise not using your phone.
+function shiftPastQuietHours(fireAt: number, start: number, end: number): number {
+  const date = new Date(fireAt);
+  if (!isQuietHour(date.getHours(), start, end)) return fireAt;
+
+  const shifted = new Date(date);
+  shifted.setHours(end, 0, 0, 0);
+  if (shifted.getTime() <= fireAt) {
+    shifted.setDate(shifted.getDate() + 1);
+  }
+  return shifted.getTime();
+}
+
 async function scheduleAt(fireDate: Date, body: string): Promise<string | null> {
   const content = {
     title: NOTIFICATION_TITLE,
@@ -85,22 +106,36 @@ export async function scheduleUpcoming(options: {
   intervalMinutes: number;
   categories: QuoteCategory[];
   extraQuotes: Quote[];
+  quietHoursEnabled?: boolean;
+  quietHoursStart?: number;
+  quietHoursEnd?: number;
 }): Promise<void> {
-  const { intervalMinutes, categories, extraQuotes } = options;
+  const {
+    intervalMinutes,
+    categories,
+    extraQuotes,
+    quietHoursEnabled = false,
+    quietHoursStart = 22,
+    quietHoursEnd = 7,
+  } = options;
 
   await Notifications.cancelAllScheduledNotificationsAsync();
 
   const entries: ScheduledEntry[] = [];
   let lastId: string | undefined;
-  const now = Date.now();
+  let cursor = Date.now();
 
-  for (let i = 1; i <= MAX_PENDING; i++) {
-    const fireAt = now + i * intervalMinutes * 60000;
+  for (let i = 0; i < MAX_PENDING; i++) {
+    cursor += intervalMinutes * 60000;
+    if (quietHoursEnabled) {
+      cursor = shiftPastQuietHours(cursor, quietHoursStart, quietHoursEnd);
+    }
+
     const quote = getRandomQuote(categories, lastId, extraQuotes);
     lastId = quote.id;
 
-    const notifId = await scheduleAt(new Date(fireAt), quote.text);
-    if (notifId) entries.push({ notifId, fireAt });
+    const notifId = await scheduleAt(new Date(cursor), quote.text);
+    if (notifId) entries.push({ notifId, fireAt: cursor });
   }
 
   await writeSchedule(entries);
