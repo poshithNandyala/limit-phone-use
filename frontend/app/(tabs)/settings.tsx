@@ -142,6 +142,24 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.card}>
+        <View style={styles.rowLeft}>
+          <Ionicons name="time-outline" size={22} color={theme.text} />
+          <Text style={styles.rowLabel}>About "Time in App"</Text>
+        </View>
+        <Text style={styles.hint}>
+          This app can only measure how long it's been open itself - it can't see your total phone
+          usage across other apps. For your real, device-wide screen time, check your phone's own
+          Digital Wellbeing / Screen Time dashboard in system settings.
+        </Text>
+        <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openSettings()}>
+          <Ionicons name="phone-portrait-outline" size={16} color={theme.primary} />
+          <Text style={[styles.linkText, { color: theme.primary, fontSize: 13 }]}>
+            Open Phone Settings
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.card}>
         <TouchableOpacity style={styles.row} onPress={handleClearFavorites}>
           <View style={styles.rowLeft}>
             <Ionicons name="heart-dislike-outline" size={22} color="#FF6B6B" />
