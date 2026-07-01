@@ -95,17 +95,21 @@ Once the app is published to the App Store, search for "Digital Wellbeing" and i
 - **Reminders Sent**: Count of notifications sent to you
 
 ### Reminder Types
-- **Pre-defined**: 30+ carefully crafted reasons covering:
-  - Health and wellness
-  - Relationships and family
-  - Productivity and focus
-  - Nature and mindfulness
-  - Mental health
+- **Quotes**: 100+ carefully crafted, categorized quotes covering Health, Relationships,
+  Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, and Growth. These are
+  bundled in the app and work completely offline — browse, search, favorite, and share them
+  from the Quote Library tab.
+- **AI Generated** (optional): Only available if you (or the app builder) configured a backend
+  URL. Produces real-time personalized messages. Falls back to quotes automatically if the
+  backend is unreachable.
+- **Mix**: Alternates between quotes and AI-generated messages.
 
-- **AI Generated**: Real-time personalized messages that consider:
-  - Time of day
-  - Context
-  - Variety in approach
+### New in this version
+- Pick which quote categories you want reminders from (Settings/Home)
+- Choose your reminder interval, from 5 to 60 minutes
+- Heart any quote to save it to Favorites
+- Check your streak and 7-day activity chart on the Stats tab
+- Toggle Dark Mode in Settings
 
 ### Tips for Success
 1. Start with reminders enabled in the morning

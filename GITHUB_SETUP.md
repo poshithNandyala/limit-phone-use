@@ -5,6 +5,36 @@ Push this app to GitHub so users can download and install the APK directly.
 
 ---
 
+## ⚡ Fastest Path: Automated Release Workflow (Recommended)
+
+This repo includes [`.github/workflows/release.yml`](.github/workflows/release.yml), which
+builds an installable Android APK and publishes it as a GitHub Release automatically —
+no local Android setup, no EAS account needed.
+
+**To cut a release:**
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+That's it. GitHub Actions will:
+1. Check out the code and install dependencies
+2. Generate the native Android project (`expo prebuild`)
+3. Build the APK with Gradle
+4. Create a GitHub Release tagged `v1.1.0` with the APK attached
+
+You can also trigger it manually from the **Actions** tab using "Run workflow" (workflow_dispatch).
+
+Optionally, set a repository variable `EXPO_PUBLIC_BACKEND_URL` (Settings → Secrets and
+variables → Actions → Variables) if you're running the optional AI backend and want release
+builds to point at it. The app works fully offline without it.
+
+The rest of this guide covers the manual/EAS path if you want more control (e.g. Play Store
+signing, iOS builds).
+
+---
+
 ## Step 1️⃣: Push Code to GitHub
 
 ### Option A: Using Emergent Dashboard (Easiest)
@@ -111,11 +141,12 @@ eas build --platform android --profile production
      4. Open the app and start your wellbeing journey!
      
      ### ✨ Features
-     - Auto reminders every 10 minutes
-     - 30+ pre-defined motivational messages
-     - AI-generated personalized reasons
-     - Screen time tracking
-     - Beautiful modern UI
+     - Configurable reminders (5-60 minutes), fully offline
+     - 100+ curated quotes across 10 categories
+     - Favorites, search, and sharing
+     - Optional AI-generated personalized reasons
+     - Screen time tracking, streaks, and stats
+     - Dark mode + beautiful modern UI
      
      ### 📖 Full Instructions
      See [INSTALLATION.md](./INSTALLATION.md) for detailed setup guide.
