@@ -12,12 +12,14 @@ export type QuoteCategory =
   | 'family'
   | 'focus'
   | 'creativity'
-  | 'growth';
+  | 'growth'
+  | 'other';
 
 export interface Quote {
   id: string;
   text: string;
   category: QuoteCategory;
+  custom?: boolean;
 }
 
 export interface CategoryMeta {
@@ -38,6 +40,7 @@ export const CATEGORIES: CategoryMeta[] = [
   { key: 'focus', label: 'Focus', icon: 'eye-outline', color: '#34495E' },
   { key: 'creativity', label: 'Creativity', icon: 'color-palette-outline', color: '#E67E22' },
   { key: 'growth', label: 'Growth', icon: 'trending-up-outline', color: '#16A085' },
+  { key: 'other', label: 'Other', icon: 'ellipsis-horizontal-outline', color: '#95A5A6' },
 ];
 
 const raw: Record<QuoteCategory, string[]> = {
@@ -57,6 +60,16 @@ const raw: Record<QuoteCategory, string[]> = {
     'Fresh air does more for your energy than another feed refresh.',
     'Deep breathing for one minute lowers your stress hormones instantly.',
     'Your future joints will thank you for standing up now.',
+    'Your thumb has done enough scrolling for today. Give it a rest.',
+    'Headaches from screen glare are your body asking you to look away.',
+    'Ten push-ups right now will do more for you than ten more posts.',
+    'Your immune system works better when you\'re not sitting still for hours.',
+    'The gym doesn\'t care about your streak. Your body does. Go move it.',
+    'Screen time and sitting time are usually the same time. Break both.',
+    'Your jaw is probably clenched right now. Notice it. Release it.',
+    'A short stretch break resets circulation your scrolling thumb can\'t.',
+    'Appetite cues get confused by mindless scrolling through mealtimes. Eat present.',
+    'Your body was built to move, not to mirror the shape of your phone.',
   ],
   relationships: [
     'Someone you love might need you right now. Be present.',
@@ -73,6 +86,16 @@ const raw: Record<QuoteCategory, string[]> = {
     'Someone is waiting for you to look up and smile.',
     'A shared laugh in person outlasts a thousand reactions.',
     'Your presence is the best gift you can give someone today.',
+    'You can\'t hug someone through a screen. Go find them.',
+    'The best inside jokes are born in person, not in group chats.',
+    'Nobody ever said "I wish we\'d texted more" looking back on their life.',
+    'A phone-free walk with a friend beats a week of liking their posts.',
+    'Your partner would rather have five undistracted minutes than fifty half-present ones.',
+    'Reply to the message later. Look at the person in front of you now.',
+    'Loneliness rarely gets cured by more scrolling. Reach out instead.',
+    'The friend you haven\'t called in months is one tap away. Do it.',
+    'Vulnerability happens face to face, not through a filtered feed.',
+    'Your community needs your presence more than your engagement.',
   ],
   productivity: [
     'Your productivity increases with focused, uninterrupted time.',
@@ -89,6 +112,16 @@ const raw: Record<QuoteCategory, string[]> = {
     'A focused hour is worth more than a distracted day.',
     'Your career grows in the hours you aren\'t scrolling.',
     'Discipline today buys freedom tomorrow. Put the phone down.',
+    'You\'ll never regret the hour you spent focused. You will regret the hour you didn\'t.',
+    'Checking your phone "just for a second" always costs more than a second.',
+    'The task you\'re avoiding is easier than the guilt of avoiding it.',
+    'Your inbox will still be there in twenty focused minutes. Start now.',
+    'Deep work is a skill. Every distraction-free minute trains it.',
+    'You don\'t need more time. You need fewer interruptions.',
+    'Finish one thing before you open one more tab.',
+    'The plan you made this morning didn\'t include an hour of scrolling. Stick to it.',
+    'Willpower is a muscle — the phone in your pocket is testing it right now.',
+    'Success is mostly just doing the thing while everyone else is distracted.',
   ],
   mindfulness: [
     'Mindfulness requires disconnection. Try it for just one minute.',
@@ -104,6 +137,16 @@ const raw: Record<QuoteCategory, string[]> = {
     'A calm mind can\'t be built on a feed of noise.',
     'Sit with the discomfort of boredom — it passes, and clarity follows.',
     'You can\'t be anxious and fully present at the same time.',
+    'Try three slow breaths before your next unlock. Notice what changes.',
+    'Restlessness is just a craving for the next notification. Let it pass.',
+    'The itch to check your phone will fade in seconds if you don\'t feed it.',
+    'Stillness feels unfamiliar now. That\'s exactly why it\'s worth practicing.',
+    'You are not your notifications. You are the one choosing to look, or not.',
+    'A quiet mind hears things a busy feed drowns out.',
+    'Watch the urge to scroll rise and fall like a wave, without riding it.',
+    'Gratitude for this exact moment doesn\'t fit in a scrolling thumb.',
+    'The app will still be there. This feeling of presence might not be, if you look away.',
+    'One mindful minute is worth more than an hour of mindless scrolling.',
   ],
   sleep: [
     'Sleep quality improves dramatically when screens go off before bed.',
@@ -117,6 +160,15 @@ const raw: Record<QuoteCategory, string[]> = {
     'Deep sleep repairs your body — screens only postpone it.',
     'Read a page of a real book instead of a feed tonight.',
     'Your alarm will feel kinder if you sleep an hour earlier.',
+    'One more video is never actually just one more video at midnight.',
+    'Your phone on the nightstand is the last thing arguing against your rest.',
+    'Melatonin doesn\'t stand a chance against a bright screen an inch from your face.',
+    'The scroll that keeps you up rarely feels worth it in the morning.',
+    'A wind-down routine without screens tells your brain it\'s safe to rest.',
+    'Sleep debt doesn\'t forgive itself. Pay it back starting tonight.',
+    'Your best ideas tomorrow depend on the sleep you protect tonight.',
+    'Night mode dims the light, not the pull. Put the phone away instead.',
+    'Rest is productive too, even though it doesn\'t feel like it at midnight.',
   ],
   nature: [
     'Nature is calling. Go outside and breathe real air.',
@@ -129,6 +181,14 @@ const raw: Record<QuoteCategory, string[]> = {
     'Feel the sun on your skin instead of the glow of your screen.',
     'A short walk outside resets your focus better than a break app.',
     'Birdsong is a notification worth paying attention to.',
+    'Rain sounds better on your skin than in an ambience app.',
+    'The horizon doesn\'t buffer, doesn\'t lag, and doesn\'t need your likes.',
+    'Clouds change shape slower than feeds, and it\'s somehow more satisfying to watch.',
+    'Your lungs were made for real air, not the light of a screen.',
+    'Go touch grass. Literally. It helps more than it sounds like it should.',
+    'The weather outside is happening whether or not you check the app for it.',
+    'Wind on your face is a sensation no notification can replicate.',
+    'Somewhere outside right now, something is blooming that you haven\'t seen.',
   ],
   family: [
     'Your family misses you, even when you\'re in the same room.',
@@ -141,6 +201,14 @@ const raw: Record<QuoteCategory, string[]> = {
     'Family time is a limited resource — spend it wisely, screen-free.',
     'The best memories rarely involve a screen in the room.',
     'Put the phone away and ask someone about their day.',
+    'Your kid just did something worth watching. Was your phone in the way?',
+    'Family photos are better when you\'re actually looking up while taking them.',
+    'One day they\'re grown, and you can\'t get these small moments back.',
+    'A sibling video-called you to talk, not to compete with your feed.',
+    'The dinner table is not the place for four separate screens.',
+    'Grandparents don\'t get unlimited time. Give them your full attention while you can.',
+    'Family game night beats family scroll night, every single time.',
+    'Your presence at home is felt even when nobody says it out loud.',
   ],
   focus: [
     'Your concentration span is shrinking. Reclaim it, one break at a time.',
@@ -153,6 +221,13 @@ const raw: Record<QuoteCategory, string[]> = {
     'Distraction is the default. Focus is a choice you make now.',
     'Your best work happens in the silence after you close the app.',
     'One task, fully finished, beats five tasks half-started.',
+    'It takes over twenty minutes to fully refocus after a notification. Was it worth it?',
+    'Attention residue lingers long after you swipe away. Protect your focus proactively.',
+    'The best flow states start with putting the phone in another room.',
+    'Every unlock resets your focus clock back to zero.',
+    'Your brain can\'t deep-focus and shallow-scroll at the same time. Pick one.',
+    'Focus isn\'t found. It\'s protected, on purpose, one blocked distraction at a time.',
+    'Fewer tabs, fewer apps, fewer pings — more of what actually matters.',
   ],
   creativity: [
     'Your creativity thrives in boredom. Let your mind wander.',
@@ -164,6 +239,13 @@ const raw: Record<QuoteCategory, string[]> = {
     'Your hands remember how to create — give them the chance.',
     'A blank page is more generous than an infinite feed.',
     'Curiosity about the real world fuels better ideas than any app.',
+    'Consuming endlessly leaves no room to create anything of your own.',
+    'The song, story, or drawing in you needs quiet you haven\'t given it yet.',
+    'Every great idea you\'ve had arrived when you weren\'t staring at a screen.',
+    'Imitation lives in feeds. Originality lives in the space you protect from them.',
+    'Pick up the instrument, the pen, or the tool instead of the phone, just once today.',
+    'Your inner critic gets louder online and quieter when you\'re actually making something.',
+    'Constraints spark creativity. An empty afternoon is the best constraint there is.',
   ],
   growth: [
     'Your future self will thank you for this break.',
@@ -177,6 +259,26 @@ const raw: Record<QuoteCategory, string[]> = {
     'The version of you that you want to become isn\'t built on a screen.',
     'Learning a new skill beats watching someone else use theirs.',
     'Reflection needs quiet — the kind your phone rarely allows.',
+    'You are not behind. You are exactly where consistent effort will take you next.',
+    'Every app is optimized to keep you. Choose to leave anyway.',
+    'The person you\'ll be in a year is built from what you do in minutes like this one.',
+    'Discomfort now, growth later. Scrolling now, regret later. Pick your later.',
+    'Nobody grew by being comfortable. Put the phone down and get uncomfortable.',
+    'Small, boring, repeated actions are what change actually looks like.',
+    'You don\'t need motivation. You need one small action, right now, without your phone.',
+    'The algorithm doesn\'t want you to grow. It wants you to stay. You get to choose.',
+    'Progress is invisible day to day and undeniable year to year. Keep going.',
+    'Your habits are quietly voting for the person you\'re becoming. Vote well.',
+  ],
+  other: [
+    'Whatever brought you here, this next moment is yours to spend well.',
+    'You opened this app instead of the one that steals your time. That\'s a win.',
+    'This is your reminder that you\'re capable of more than one more scroll.',
+    'Not every category fits neatly — sometimes you just need a nudge. Here it is.',
+    'You get to decide what this next hour is used for. Choose on purpose.',
+    'Whatever you\'re working on, working toward, or working through — keep going.',
+    'This moment doesn\'t need an explanation. Just put the phone down for now.',
+    'Add your own reminders below — the ones that actually work for you.',
   ],
 };
 
@@ -192,13 +294,18 @@ export function getCategoryMeta(category: QuoteCategory): CategoryMeta {
   return CATEGORIES.find((c) => c.key === category) ?? CATEGORIES[0];
 }
 
-export function getQuotesByCategories(categories?: QuoteCategory[]): Quote[] {
-  if (!categories || categories.length === 0) return QUOTES;
-  return QUOTES.filter((q) => categories.includes(q.category));
+// All of these helpers accept an optional `extra` pool (e.g. user-submitted
+// custom quotes from AppContext) which gets merged in alongside the
+// built-in QUOTES. Callers that don't pass one just get the built-ins.
+
+export function getQuotesByCategories(categories?: QuoteCategory[], extra: Quote[] = []): Quote[] {
+  const pool = extra.length ? [...QUOTES, ...extra] : QUOTES;
+  if (!categories || categories.length === 0) return pool;
+  return pool.filter((q) => categories.includes(q.category));
 }
 
-export function getRandomQuote(categories?: QuoteCategory[], exclude?: string): Quote {
-  const pool = getQuotesByCategories(categories);
+export function getRandomQuote(categories?: QuoteCategory[], exclude?: string, extra: Quote[] = []): Quote {
+  const pool = getQuotesByCategories(categories, extra);
   const candidates = exclude && pool.length > 1 ? pool.filter((q) => q.id !== exclude) : pool;
   const list = candidates.length > 0 ? candidates : pool;
   return list[Math.floor(Math.random() * list.length)];
@@ -211,12 +318,12 @@ export function getQuoteOfTheDay(date: Date = new Date()): Quote {
   return QUOTES[index];
 }
 
-export function findQuoteById(id: string): Quote | undefined {
-  return QUOTES.find((q) => q.id === id);
+export function findQuoteById(id: string, extra: Quote[] = []): Quote | undefined {
+  return QUOTES.find((q) => q.id === id) ?? extra.find((q) => q.id === id);
 }
 
-export function searchQuotes(query: string, categories?: QuoteCategory[]): Quote[] {
-  const pool = getQuotesByCategories(categories);
+export function searchQuotes(query: string, categories?: QuoteCategory[], extra: Quote[] = []): Quote[] {
+  const pool = getQuotesByCategories(categories, extra);
   const q = query.trim().toLowerCase();
   if (!q) return pool;
   return pool.filter((quote) => quote.text.toLowerCase().includes(q));

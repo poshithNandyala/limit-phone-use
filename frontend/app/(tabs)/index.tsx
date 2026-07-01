@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Text,
   View,
@@ -17,16 +17,13 @@ import * as Device from 'expo-device';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppContext } from '@/context/AppContext';
 import { AppTheme } from '@/constants/theme';
-import {
-  CATEGORIES,
-  getQuoteOfTheDay,
-  getRandomQuote,
-  Quote,
-} from '@/constants/quotes';
+import { CATEGORIES, getQuoteOfTheDay, getRandomQuote, Quote } from '@/constants/quotes';
+import { fetchGeminiReason } from '@/lib/gemini';
+import { cancelUpcoming, reconcileDelivered, scheduleUpcoming } from '@/lib/reminderScheduler';
 
 const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const INTERVAL_OPTIONS = [5, 10, 15, 20, 30, 45, 60];
-const AI_TIMEOUT_MS = 6000;
+const AI_TIMEOUT_MS = 8000;
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -36,7 +33,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-async function fetchAiText(): Promise<string | null> {
+async function fetchLegacyBackendText(): Promise<string | null> {
   if (!EXPO_PUBLIC_BACKEND_URL) return null;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
@@ -68,7 +65,11 @@ export default function Home() {
     setReasonType,
     selectedCategories,
     toggleCategory,
-    hasAiBackend,
+    hasAi,
+    hasGemini,
+    hasLegacyBackend,
+    geminiApiKey,
+    customQuotes,
     todayMinutes,
     todayReminders,
     streak,
@@ -76,6 +77,7 @@ export default function Home() {
     toggleFavorite,
     addUsageMinute,
     addReminderSent,
+    addReminderCountsForDates,
     markAppOpened,
     loaded,
   } = useAppContext();
@@ -86,7 +88,27 @@ export default function Home() {
 
   const appState = useRef(AppState.currentState);
   const usageTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const notificationTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const syncRef = useRef<() => Promise<void>>(async () => {});
+
+  const syncBackgroundReminders = useCallback(async () => {
+    const counts = await reconcileDelivered();
+    if (Object.keys(counts).length > 0) addReminderCountsForDates(counts);
+
+    if (isEnabled) {
+      await scheduleUpcoming({
+        intervalMinutes: reminderInterval,
+        categories: selectedCategories,
+        extraQuotes: customQuotes,
+      });
+    } else {
+      await cancelUpcoming();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEnabled, reminderInterval, selectedCategories, customQuotes]);
+
+  useEffect(() => {
+    syncRef.current = syncBackgroundReminders;
+  }, [syncBackgroundReminders]);
 
   useEffect(() => {
     registerForPushNotificationsAsync();
@@ -96,18 +118,19 @@ export default function Home() {
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     return () => {
       subscription.remove();
-      stopTracking();
+      stopUsageTimer();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!loaded) return;
-    stopTracking();
-    if (isEnabled) startTracking();
-    return stopTracking;
+    syncBackgroundReminders();
+    stopUsageTimer();
+    if (isEnabled) startUsageTimer();
+    return stopUsageTimer;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEnabled, reminderInterval, loaded]);
+  }, [isEnabled, reminderInterval, selectedCategories, customQuotes, loaded]);
 
   const registerForPushNotificationsAsync = async () => {
     if (Platform.OS === 'android') {
@@ -129,7 +152,7 @@ export default function Home() {
       if (finalStatus !== 'granted') {
         Alert.alert(
           'Permission Required',
-          'Please enable notifications to get screen time reminders.',
+          'Please enable notifications so reminders can reach you, including while the app is closed.',
           [{ text: 'OK' }]
         );
       }
@@ -139,40 +162,36 @@ export default function Home() {
   const handleAppStateChange = (nextAppState: string) => {
     if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
       markAppOpened();
+      syncRef.current();
     }
     appState.current = nextAppState;
   };
 
-  const startTracking = () => {
+  const startUsageTimer = () => {
     usageTimer.current = setInterval(() => addUsageMinute(), 60000);
-    notificationTimer.current = setInterval(() => sendNotification(), reminderInterval * 60000);
   };
 
-  const stopTracking = () => {
+  const stopUsageTimer = () => {
     if (usageTimer.current) {
       clearInterval(usageTimer.current);
       usageTimer.current = null;
-    }
-    if (notificationTimer.current) {
-      clearInterval(notificationTimer.current);
-      notificationTimer.current = null;
     }
   };
 
   const pickQuote = async (): Promise<{ quote: Quote; isAi: boolean }> => {
     let useAi = reasonType === 'ai';
-    if (reasonType === 'both' && hasAiBackend) useAi = Math.random() < 0.5;
+    if (reasonType === 'both' && hasAi) useAi = Math.random() < 0.5;
 
-    if (useAi && hasAiBackend) {
-      const aiText = await fetchAiText();
+    if (useAi && hasAi) {
+      const aiText = hasGemini ? await fetchGeminiReason(geminiApiKey) : await fetchLegacyBackendText();
       if (aiText) {
         return { quote: { id: `ai-${Date.now()}`, text: aiText, category: 'growth' }, isAi: true };
       }
     }
-    return { quote: getRandomQuote(selectedCategories, lastQuote?.id), isAi: false };
+    return { quote: getRandomQuote(selectedCategories, lastQuote?.id, customQuotes), isAi: false };
   };
 
-  const sendNotification = async () => {
+  const sendNotificationNow = async () => {
     const { quote, isAi } = await pickQuote();
     setLastQuote(quote);
     setLastIsAi(isAi);
@@ -192,7 +211,7 @@ export default function Home() {
 
   const handleManualReminder = async () => {
     setLoading(true);
-    await sendNotification();
+    await sendNotificationNow();
     setLoading(false);
   };
 
@@ -238,7 +257,7 @@ export default function Home() {
           <View style={styles.statItem}>
             <Ionicons name="time-outline" size={32} color="#FF6B6B" />
             <Text style={styles.statValue}>{formatTime(todayMinutes)}</Text>
-            <Text style={styles.statLabel}>Screen Time</Text>
+            <Text style={styles.statLabel}>Time in App</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
@@ -319,7 +338,7 @@ export default function Home() {
             </Text>
           </TouchableOpacity>
 
-          {hasAiBackend && (
+          {hasAi && (
             <TouchableOpacity
               style={[styles.reasonTypeButton, reasonType === 'ai' && styles.reasonTypeButtonActive]}
               onPress={() => setReasonType('ai')}
@@ -331,7 +350,7 @@ export default function Home() {
             </TouchableOpacity>
           )}
 
-          {hasAiBackend && (
+          {hasAi && (
             <TouchableOpacity
               style={[styles.reasonTypeButton, reasonType === 'both' && styles.reasonTypeButtonActive]}
               onPress={() => setReasonType('both')}
@@ -343,10 +362,13 @@ export default function Home() {
             </TouchableOpacity>
           )}
         </View>
-        {!hasAiBackend && (
+        {!hasAi && (
           <Text style={styles.hintText}>
-            Connect a backend URL in Settings to unlock AI-generated reminders.
+            Add your free Gemini API key in Settings to unlock AI-generated reminders.
           </Text>
+        )}
+        {hasAi && !hasGemini && hasLegacyBackend && (
+          <Text style={styles.hintText}>Using the configured backend for AI reminders.</Text>
         )}
 
         <View style={styles.divider} />
@@ -383,7 +405,8 @@ export default function Home() {
       <View style={styles.infoCard}>
         <Ionicons name="information-circle-outline" size={20} color={theme.subtext} />
         <Text style={styles.infoText}>
-          Reminders sent every {reminderInterval} minutes while the app is active. Works fully offline.
+          Reminders every {reminderInterval} minutes, delivered by your phone even when the app is
+          closed. Works fully offline.
         </Text>
       </View>
 

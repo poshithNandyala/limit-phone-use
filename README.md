@@ -22,15 +22,18 @@
 
 ## 🌟 Features
 
-- **100+ Curated Quotes** across 10 categories — Health, Relationships, Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, Growth
+- **200+ Curated Quotes** across 11 categories — Health, Relationships, Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, Growth, and Other
 - **Works Fully Offline** — the entire quote library ships inside the app, no backend or account required
-- **Optional AI Reminders** — plug in your own backend URL for AI-generated personalized reasons, or mix AI with quotes; falls back to the local library automatically if the backend is unreachable
-- **Quote Library Tab** — search and filter every quote by category
+- **True Background Reminders** — reminders are scheduled directly with your phone's notification system, so they keep arriving even when the app is closed or killed, not just while it's open
+- **Free AI Reminders (BYOK)** — paste your own free [Gemini API key](https://aistudio.google.com/apikey) in Settings for AI-generated personalized reasons, called directly from your device to Google - no backend required. Leave it blank and everything still works great offline
+- **Quote Library Tab** — search and filter every quote by category, with all categories always visible
+- **Add Your Own Quotes** — write your own reminders and file them under any category, including "Other" for anything that doesn't fit
 - **Favorites** — heart any quote and revisit it anytime
 - **Share Quotes** — send a quote to any app in one tap
 - **Configurable Reminders** — pick an interval from 5 to 60 minutes and which categories to draw from
-- **Daily Streaks** — tracks consecutive days you've used the app
-- **Stats Dashboard** — screen time, reminders sent, and a 7-day activity chart
+- **Streaks Tab** — build (or break) any habit you want: daily workouts, coding practice, quitting something, anything. Free-text name and your own icon, a current/best streak counter, a 28-day calendar view, and celebration milestones at day 1, 3, 7, 14, 30, 60, 100, and beyond
+- **Daily App Streak** — tracks consecutive days you've used the app
+- **Stats Dashboard** — time in app, reminders sent, and a 7-day activity chart
 - **Dark Mode** — full light/dark theme support
 - **Manual Reminders** — an instant "Send Reminder Now" button for when you need it right away
 
@@ -93,21 +96,23 @@ yarn install
 expo start
 ```
 
-### Optional: running the AI backend
+### Optional: AI-generated reminders
 
-The app works completely offline without a backend. If you want AI-generated reminders too:
+The app works completely offline without any of this. For AI-generated reminders, the
+recommended path is to open **Settings → AI Reminders** in the app and paste in a free
+[Gemini API key](https://aistudio.google.com/apikey) - it's called directly from the device to
+Google, no backend involved, and nothing breaks if it's left blank.
+
+There's also a legacy optional FastAPI backend (`backend/`) for AI reminders via OpenAI, kept for
+backwards compatibility:
 
 ```bash
-# Install backend dependencies
 cd backend
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your MongoDB URL and LLM key
 
-# Start MongoDB
 mongod
-
-# Start the backend
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
 ```
 
@@ -147,21 +152,25 @@ eas build --platform ios --profile production   # requires an Apple Developer ac
 
 - **Frontend**
   - React Native + Expo SDK 54, TypeScript
-  - Expo Router (tabbed navigation: Home / Quotes / Stats / Settings)
-  - Expo Notifications, AsyncStorage for local persistence
-- **Backend** (optional, only used for AI-generated reminders)
-  - FastAPI (Python), MongoDB
-  - OpenAI GPT-5.2 via the Emergent LLM integration library
+  - Expo Router (tabbed navigation: Home / Quotes / Streaks / Stats / Settings)
+  - Expo Notifications with date-triggered scheduling for true background delivery, AsyncStorage for local persistence
+- **AI** (both optional)
+  - Gemini (`gemini-2.0-flash`) called directly from the device with a user-supplied API key - no backend
+  - Legacy FastAPI backend (Python, MongoDB, OpenAI) kept for backwards compatibility
 - **CI/CD**
   - GitHub Actions: `expo prebuild` + Gradle build → GitHub Release with the APK attached
 
 ## 📱 How It Works
 
-1. **App State Detection** — tracks when you're actively using your phone
-2. **Timer System** — every N minutes (configurable, 5–60) of active use triggers a reminder
-3. **Smart Reasons** — picks a quote from the built-in, categorized library (fully offline), optionally mixed with AI-generated messages from your own backend, with automatic fallback if that backend is unreachable
-4. **Local Notifications** — native push notifications on your device
-5. **Stats Tracking** — screen time, reminders sent, streaks, and a 7-day chart, all stored locally on-device
+1. **Background-Scheduled Reminders** — reminders are scheduled ahead of time directly with the OS notification system (not a JS timer), so they're delivered on schedule whether the app is open, backgrounded, or fully closed
+2. **Smart Reasons** — picks a quote from the built-in, categorized library (fully offline) or your own added quotes, optionally mixed with AI-generated messages (Gemini or a configured backend), with automatic fallback to the local library if AI is unavailable
+3. **Local Notifications** — native notifications on your device, no push server involved
+4. **Stats Tracking** — time in app, reminders sent, streaks, and a 7-day chart, all stored locally on-device
+5. **Streaks** — track any habit you want with a daily mark-done button, current/longest streak, and milestone celebrations
+
+> **Note on "Time in App":** this currently measures how long *this app* has been open, not your
+> phone's total screen time system-wide - real device-wide screen time requires Android's special
+> Usage Access permission plus a native module, which is tracked as a follow-up (see open issues).
 
 ## 🎯 Use Cases
 

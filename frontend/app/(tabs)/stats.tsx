@@ -76,7 +76,7 @@ export default function StatsScreen() {
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{formatTime(totals.minutes)}</Text>
-            <Text style={styles.statLabel}>Screen Time Logged</Text>
+            <Text style={styles.statLabel}>Time in App</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
