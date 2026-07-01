@@ -1,162 +1,179 @@
-# 📱 Digital Wellbeing - Screen Time Reduction App
+# 📱 Digital Wellbeing — Screen Time Reduction App
 
-> Reclaim your time. Reduce your screen time to almost zero with smart, personalized reminders.
+> Reclaim your time. Put your phone down with smart, offline-first reminders and 100+ curated quotes.
 
-![Digital Wellbeing](https://img.shields.io/badge/Expo-SDK%2054-blue)
-![React Native](https://img.shields.io/badge/React%20Native-0.81-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
+[![Latest Release](https://img.shields.io/github/v/release/poshithNandyala/limit-phone-use?label=latest%20release&color=4A90E2)](https://github.com/poshithNandyala/limit-phone-use/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/poshithNandyala/limit-phone-use/total?color=2ECC71)](https://github.com/poshithNandyala/limit-phone-use/releases/latest)
+![Expo](https://img.shields.io/badge/Expo-SDK%2054-blue)
+![React Native](https://img.shields.io/badge/React%20Native-0.81-61dafb)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+<p align="center">
+  <a href="https://github.com/poshithNandyala/limit-phone-use/releases/latest">
+    <strong>⬇️ Download the latest APK</strong>
+  </a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/poshithNandyala/limit-phone-use/issues/new?template=bug_report.yml">🐛 Report a Bug</a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/poshithNandyala/limit-phone-use/issues/new?template=feature_request.yml">✨ Request a Feature</a>
+</p>
+
+---
 
 ## 🌟 Features
 
-- **100+ Curated Quotes**: Hand-picked motivational quotes across 10 categories (Health,
-  Relationships, Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, Growth)
-- **Works Fully Offline**: The quote library ships inside the app — no backend required
-- **Smart Notifications**: Configurable reminders (5–60 min) while using your phone
-- **Optional AI Reminders**: Plug in a backend URL for AI-generated personalized reasons, or mix AI + quotes
-- **Favorites**: Heart any quote to save it, browse your favorites anytime
-- **Quote Library Tab**: Search and filter all quotes by category
-- **Share Quotes**: Share any quote to your favorite apps
-- **Daily Streaks**: Tracks consecutive days you've used the app
-- **Stats Dashboard**: Screen time, reminders sent, and a 7-day activity chart
-- **Dark Mode**: Full light/dark theme support
-- **Manual Reminders**: Instant notification button when you need motivation
-- **Customizable**: Toggle notifications on/off, choose reminder interval, type, and categories
+- **100+ Curated Quotes** across 10 categories — Health, Relationships, Productivity, Mindfulness, Sleep, Nature, Family, Focus, Creativity, Growth
+- **Works Fully Offline** — the entire quote library ships inside the app, no backend or account required
+- **Optional AI Reminders** — plug in your own backend URL for AI-generated personalized reasons, or mix AI with quotes; falls back to the local library automatically if the backend is unreachable
+- **Quote Library Tab** — search and filter every quote by category
+- **Favorites** — heart any quote and revisit it anytime
+- **Share Quotes** — send a quote to any app in one tap
+- **Configurable Reminders** — pick an interval from 5 to 60 minutes and which categories to draw from
+- **Daily Streaks** — tracks consecutive days you've used the app
+- **Stats Dashboard** — screen time, reminders sent, and a 7-day activity chart
+- **Dark Mode** — full light/dark theme support
+- **Manual Reminders** — an instant "Send Reminder Now" button for when you need it right away
 
 ## 📸 Screenshots
 
-*Add screenshots of your app here*
+*Add screenshots of the Home, Quotes, Stats, and Settings tabs here.*
 
 ## 🚀 Quick Start for Users
 
-### Option 1: Install APK (Android) - **Easiest**
+### Install the APK (Android)
 
-1. Go to [Releases](../../releases)
+1. Go to **[Releases](https://github.com/poshithNandyala/limit-phone-use/releases/latest)**
 2. Download the latest `digital-wellbeing-vX.Y.Z.apk`
-3. Install on your Android device
-4. Enable "Install from Unknown Sources" if prompted
-5. Open the app and start your wellbeing journey! No setup, no backend, no account needed —
-   it works completely offline.
+3. Open the downloaded file and allow "Install from unknown sources" if prompted
+4. Open the app — no setup, no account, no backend needed. It works completely offline.
 
-Every release APK is built and published automatically by GitHub Actions
-(see [`.github/workflows/release.yml`](.github/workflows/release.yml)) whenever a new
-version tag is pushed.
+Every release is built and published automatically by GitHub Actions
+(see [`.github/workflows/release.yml`](.github/workflows/release.yml)) — no manual APK building required.
 
-### Option 2: Test with Expo Go
+> This build is signed with the default Android debug keystore, which is fine for direct installs.
+> If you want a Play Store-ready build, use `eas build` with your own signing credentials (see below).
 
-1. Install **Expo Go** from [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent) or [App Store](https://apps.apple.com/app/expo-go/id982107779)
-2. Scan this QR code or use the link provided in releases
-3. App loads instantly for testing
+### Test with Expo Go (developers/testers)
+
+1. Install **Expo Go** from [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent) or the [App Store](https://apps.apple.com/app/expo-go/id982107779)
+2. Run `expo start` from the `frontend` directory (see [For Developers](#-for-developers) below)
+3. Scan the QR code shown in your terminal
+
+## 🐛 Found a bug? Have an idea?
+
+Please open an issue — it takes less than a minute:
+
+- **[🐛 Report a Bug](https://github.com/poshithNandyala/limit-phone-use/issues/new?template=bug_report.yml)** — something broken, crashing, or not working as expected
+- **[✨ Request a Feature](https://github.com/poshithNandyala/limit-phone-use/issues/new?template=feature_request.yml)** — a new quote category, a new setting, anything you wish the app did
+- **[💬 All Issues](https://github.com/poshithNandyala/limit-phone-use/issues)** — browse existing reports and requests
+
+You can also reach these forms from inside the app: **Settings → About → Report a Bug / Request a Feature**.
 
 ## 💻 For Developers
 
 ### Prerequisites
 
-- Node.js 18+ and npm/yarn
-- MongoDB (local or cloud)
-- Expo CLI: `npm install -g expo-cli`
-- EAS CLI (for building): `npm install -g eas-cli`
+- Node.js 18+ and Yarn
+- Expo CLI (`npx expo`, no global install needed)
+- MongoDB (optional — only needed if you're running the AI backend)
+- EAS CLI (optional — only needed for custom signed builds: `npm install -g eas-cli`)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd digital-wellbeing
+git clone https://github.com/poshithNandyala/limit-phone-use.git
+cd limit-phone-use
 
+# Install frontend dependencies
+cd frontend
+yarn install
+
+# Start the app (works fully offline, no backend required)
+expo start
+```
+
+### Optional: running the AI backend
+
+The app works completely offline without a backend. If you want AI-generated reminders too:
+
+```bash
 # Install backend dependencies
 cd backend
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env with your configuration
-
-# Install frontend dependencies
-cd ../frontend
-yarn install
-cp .env.example .env
-# Edit .env with your backend URL
+# Edit .env with your MongoDB URL and LLM key
 
 # Start MongoDB
 mongod
 
-# Start backend (in backend directory)
+# Start the backend
 uvicorn server:app --host 0.0.0.0 --port 8001 --reload
-
-# Start frontend (in frontend directory)
-expo start
 ```
 
-### Environment Variables
+Then point the frontend at it:
 
-**Backend (.env)**
+```
+# frontend/.env
+EXPO_PUBLIC_BACKEND_URL=http://your-backend-url:8001
+```
+
+**Backend `.env`**
 ```
 MONGO_URL=mongodb://localhost:27017
 DB_NAME=digital_wellbeing
 EMERGENT_LLM_KEY=your_llm_key_here
 ```
 
-**Frontend (.env)**
-```
-EXPO_PUBLIC_BACKEND_URL=http://your-backend-url:8001
+### Building your own APK/IPA
+
+**Automatic (recommended):** push a version tag and let GitHub Actions build and publish the release for you:
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
 ```
 
-### Building APK/IPA
+**Manual, with your own signing (e.g. for the Play Store):**
 
 ```bash
 cd frontend
-
-# Configure EAS (first time only)
 eas build:configure
-
-# Build for Android
 eas build --platform android --profile production
-
-# Build for iOS (requires Apple Developer account)
-eas build --platform ios --profile production
+eas build --platform ios --profile production   # requires an Apple Developer account
 ```
 
 ## 🏗️ Tech Stack
 
-- **Frontend**: 
-  - React Native with Expo SDK 54
-  - TypeScript
-  - Expo Notifications
-  - AsyncStorage for local data
-  - Expo Router for navigation
-
-- **Backend (optional, for AI reminders only)**:
-  - FastAPI (Python)
-  - MongoDB for data storage
-  - OpenAI GPT-5.2 integration
-  - CORS enabled for cross-origin requests
-
-- **AI Integration** (optional):
-  - Emergent LLM integration library
-  - OpenAI GPT-5.2 for personalized motivation
+- **Frontend**
+  - React Native + Expo SDK 54, TypeScript
+  - Expo Router (tabbed navigation: Home / Quotes / Stats / Settings)
+  - Expo Notifications, AsyncStorage for local persistence
+- **Backend** (optional, only used for AI-generated reminders)
+  - FastAPI (Python), MongoDB
+  - OpenAI GPT-5.2 via the Emergent LLM integration library
+- **CI/CD**
+  - GitHub Actions: `expo prebuild` + Gradle build → GitHub Release with the APK attached
 
 ## 📱 How It Works
 
-1. **App State Detection**: Tracks when you're actively using your phone
-2. **Timer System**: Every N minutes (configurable, 5–60) of active use triggers a reminder
-3. **Smart Reasons**: Picks a quote from the 100+ built-in, categorized quote library — completely
-   offline, no backend required. If a backend URL is configured, it can also fetch AI-generated
-   messages and mix them in, with an automatic fallback to the local library if the backend is
-   unreachable.
-4. **Local Notifications**: Native push notifications on your device
-5. **Stats Tracking**: Screen time, reminders sent, streaks, and a 7-day chart — all stored locally
+1. **App State Detection** — tracks when you're actively using your phone
+2. **Timer System** — every N minutes (configurable, 5–60) of active use triggers a reminder
+3. **Smart Reasons** — picks a quote from the built-in, categorized library (fully offline), optionally mixed with AI-generated messages from your own backend, with automatic fallback if that backend is unreachable
+4. **Local Notifications** — native push notifications on your device
+5. **Stats Tracking** — screen time, reminders sent, streaks, and a 7-day chart, all stored locally on-device
 
 ## 🎯 Use Cases
 
-- Reduce phone addiction
-- Improve work-life balance
+- Reduce phone addiction and mindless scrolling
+- Improve work-life balance and focus
 - Better sleep hygiene (less screen time before bed)
 - Increase face-to-face interactions
-- Boost productivity and focus
-- Improve mental health
-- Encourage outdoor activities
+- Encourage outdoor activities and mindfulness
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome!
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -164,20 +181,16 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+If you're not sure where to start, check the [open issues](https://github.com/poshithNandyala/limit-phone-use/issues) — especially ones labeled `enhancement` or `good first issue`.
+
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Built with ❤️ using Expo and React Native
-- AI-powered by OpenAI GPT-5.2
-- Inspired by the digital wellbeing movement
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
 
 ## 📧 Support
 
-For issues, questions, or suggestions:
-- Open an [Issue](../../issues)
+- **[Download the latest release](https://github.com/poshithNandyala/limit-phone-use/releases/latest)**
+- **[Report a bug](https://github.com/poshithNandyala/limit-phone-use/issues/new?template=bug_report.yml)** or **[request a feature](https://github.com/poshithNandyala/limit-phone-use/issues/new?template=feature_request.yml)**
 - Star ⭐ this repo if you find it helpful!
 
 ---

@@ -6,6 +6,8 @@ import { useAppContext } from '@/context/AppContext';
 import { AppTheme } from '@/constants/theme';
 
 const REPO_URL = 'https://github.com/poshithNandyala/limit-phone-use';
+const RELEASES_URL = 'https://github.com/poshithNandyala/limit-phone-use/releases/latest';
+const NEW_ISSUE_URL = 'https://github.com/poshithNandyala/limit-phone-use/issues/new/choose';
 
 export default function SettingsScreen() {
   const { theme, isDark, toggleDark, favorites, clearFavorites, hasAiBackend } = useAppContext();
@@ -72,6 +74,14 @@ export default function SettingsScreen() {
         <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openURL(REPO_URL)}>
           <Ionicons name="logo-github" size={18} color={theme.primary} />
           <Text style={[styles.linkText, { color: theme.primary }]}>View on GitHub</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openURL(RELEASES_URL)}>
+          <Ionicons name="download-outline" size={18} color={theme.primary} />
+          <Text style={[styles.linkText, { color: theme.primary }]}>Download Latest Release</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.linkRow} onPress={() => Linking.openURL(NEW_ISSUE_URL)}>
+          <Ionicons name="chatbox-ellipses-outline" size={18} color={theme.primary} />
+          <Text style={[styles.linkText, { color: theme.primary }]}>Report a Bug / Request a Feature</Text>
         </TouchableOpacity>
       </View>
 
